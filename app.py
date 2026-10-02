@@ -82,7 +82,12 @@ def index():
         selected_playbook = request.form.get("playbook", "")
 
         # Nur aktuell angebotene Dateinamen akzeptieren, keine beliebigen Pfade.
-        if selected_inventory not in inventories or selected_playbook not in playbooks:
+        if (
+            not SAFE_FILENAME.fullmatch(selected_inventory)
+            or not SAFE_FILENAME.fullmatch(selected_playbook)
+            or selected_inventory not in inventories
+            or selected_playbook not in playbooks
+        ):
             status = "error"
             output = "Ungültige Auswahl."
         else:

@@ -142,7 +142,7 @@ Passwörter besser mit [Ansible Vault](https://docs.ansible.com/ansible/latest/v
 | `Job_gitClone.yml`, `Job_Artifactory.yml` | Git-Clone / Artifactory |
 | `Config_wlan.yml`, `Setup_VLan.yml` | Netzwerk (WLAN, VLAN) |
 | `Setup_general.yml`, `Setup_cockpit.yml`, `Setup_usb.yml` | Einrichtung (Basis, Cockpit, USB) |
-| `site.yml` | Sammel-Playbook (Tasks aus `tasks/`) |
+| `jobs/site.yml` | Sammel-Playbook (Tasks aus `tasks/`) |
 
 Neue Playbooks einfach als `*.yml` mit `hosts:` in `jobs/` ablegen oder über die Playbook-Übersicht erstellen. Wiederverwendbare Tasks verwaltest du unter `/tasks`.
 
