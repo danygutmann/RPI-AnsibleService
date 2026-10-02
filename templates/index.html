@@ -14,7 +14,7 @@
           <label for="inventory" class="form-label">Inventory</label>
           <select name="inventory" id="inventory" class="form-select" required>
             {% for inv in inventories %}
-              <option value="{{ inv }}" {% if inv == selected_inventory %}selected{% endif %}>{{ inv }}</option>
+              <option value="{{ loop.index0 }}" {% if loop.index0 == selected_inventory_index %}selected{% endif %}>{{ inv }}</option>
             {% endfor %}
           </select>
         </div>
@@ -23,7 +23,7 @@
           <label for="playbook" class="form-label">Playbook</label>
           <select name="playbook" id="playbook" class="form-select" required>
             {% for pb in playbooks %}
-              <option value="{{ pb }}" {% if pb == selected_playbook %}selected{% endif %}>{{ pb }}</option>
+              <option value="{{ loop.index0 }}" {% if loop.index0 == selected_playbook_index %}selected{% endif %}>{{ pb }}</option>
             {% endfor %}
           </select>
         </div>

@@ -31,6 +31,7 @@ def list_files(directory, extensions):
         for file in directory.iterdir()
         if file.is_file()
         and not file.is_symlink()
+        and SAFE_FILENAME.fullmatch(file.name)
         and file.suffix.lower() in extensions
     )
 
@@ -56,6 +57,7 @@ def list_playbooks():
         for file in JOB_DIR.iterdir()
         if file.is_file()
         and not file.is_symlink()
+        and SAFE_FILENAME.fullmatch(file.name)
         and file.suffix.lower() in {".yml", ".yaml"}
         and file.name != "requirements.yml"
         and is_likely_playbook(file)
@@ -78,19 +80,20 @@ def index():
     status = ""
 
     if request.method == "POST":
-        selected_inventory = request.form.get("inventory", "")
-        selected_playbook = request.form.get("playbook", "")
+        try:
+            inventory_index = int(request.form.get("inventory", ""))
+            playbook_index = int(request.form.get("playbook", ""))
+        except ValueError:
+            inventory_index = playbook_index = -1
 
-        # Nur aktuell angebotene Dateinamen akzeptieren, keine beliebigen Pfade.
-        if (
-            not SAFE_FILENAME.fullmatch(selected_inventory)
-            or not SAFE_FILENAME.fullmatch(selected_playbook)
-            or selected_inventory not in inventories
-            or selected_playbook not in playbooks
+        if not (0 <= inventory_index < len(inventories)) or not (
+            0 <= playbook_index < len(playbooks)
         ):
             status = "error"
             output = "Ungültige Auswahl."
         else:
+            selected_inventory = inventories[inventory_index]
+            selected_playbook = playbooks[playbook_index]
             cmd = [
                 "ansible-playbook",
                 "-i",
@@ -124,7 +127,13 @@ def index():
         inventories=inventories,
         playbooks=playbooks,
         selected_inventory=selected_inventory,
+        selected_inventory_index=inventories.index(selected_inventory)
+        if selected_inventory in inventories
+        else -1,
         selected_playbook=selected_playbook,
+        selected_playbook_index=playbooks.index(selected_playbook)
+        if selected_playbook in playbooks
+        else -1,
         output=output,
         command=command,
         status=status,
