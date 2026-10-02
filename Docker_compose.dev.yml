@@ -1,0 +1,7 @@
+# Entwicklung: lokalen Code einbinden, Änderungen wirken ohne Neubau.
+# Start: docker compose -f Docker_compose.yml -f Docker_compose.dev.yml up -d --build
+services:
+  ansible-web:
+    volumes:
+      - .:/app
+      - /app/collections

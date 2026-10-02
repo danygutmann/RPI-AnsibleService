@@ -1,0 +1,4 @@
+.git
+.DS_Store
+ansible.log
+collections

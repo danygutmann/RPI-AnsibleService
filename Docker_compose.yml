@@ -1,19 +1,8 @@
 services:
   ansible-web:
-    image: python:3.12-slim
+    build: .
+    image: rpi-ansible-service
+    container_name: rpi-ansible-service
+    restart: unless-stopped
     ports:
       - "5000:5000"
-    volumes:
-      - /volume1/docker/Ansible:/work
-    working_dir: /work
-    environment:
-      ANSIBLE_COLLECTIONS_PATH: /work/collections
-      FLASK_DEBUG: "1"
-    command: >
-      bash -lc "
-      apt-get update &&
-      apt-get install -y --no-install-recommends openssh-client sshpass git &&
-      pip install --no-cache-dir flask ansible-core &&
-      ansible-galaxy collection install -p /work/collections community.docker community.general &&
-      python /work/app.py
-      "
