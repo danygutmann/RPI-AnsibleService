@@ -5,4 +5,4 @@
 
   tasks:
     - name: setup cockpit
-      ansible.builtin.import_tasks: tasks/setup_cockpit.yml
+      ansible.builtin.import_tasks: ../tasks/setup_cockpit.yml

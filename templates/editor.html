@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}{{ label }} bearbeiten – Testbench Ansible{% endblock %}
+
+{% block content %}
+  <h1>{% if is_new %}Neue {{ label }}-Datei{% else %}{{ label }} bearbeiten{% endif %}</h1>
+  <p>Dateien werden im Ordner <code>{{ category }}/</code> gespeichert.</p>
+
+  {% if saved %}
+    <div class="alert alert-success">Datei wurde gespeichert.</div>
+  {% endif %}
+  {% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+  {% endif %}
+
+  <form method="post">
+    {% if is_new %}
+      <div class="mb-3">
+        <label for="filename" class="form-label">Dateiname</label>
+        <input id="filename" name="filename" class="form-control" required maxlength="100"
+               pattern="[A-Za-z0-9][A-Za-z0-9_.-]{0,99}"
+               placeholder="{% if category == 'inventories' %}neues-inventory.ini{% else %}neue-datei.yml{% endif %}"
+               value="{{ filename }}">
+        <div class="form-text">Erlaubte Endungen: {% if category == 'inventories' %}.ini, .yml, .yaml{% else %}.yml, .yaml{% endif %}</div>
+      </div>
+    {% else %}
+      <p><code>{{ filename }}</code></p>
+    {% endif %}
+
+    <div class="mb-3">
+      <label for="content" class="form-label">Dateiinhalt</label>
+      <textarea id="content" name="content" class="form-control font-monospace" rows="24"
+                spellcheck="false" required>{{ content }}</textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Speichern</button>
+    {% if category == 'jobs' %}
+      <a class="btn btn-outline-secondary" href="{{ url_for('playbooks_page') }}">Abbrechen</a>
+    {% elif category == 'tasks' %}
+      <a class="btn btn-outline-secondary" href="{{ url_for('tasks_page') }}">Abbrechen</a>
+    {% else %}
+      <a class="btn btn-outline-secondary" href="{{ url_for('inventories_page') }}">Abbrechen</a>
+    {% endif %}
+  </form>
+{% endblock %}

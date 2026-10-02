@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}Testbench Commander{% endblock %}</title>
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}">
 
   <script>
     // Vor dem Laden des CSS anwenden, damit beim Seitenwechsel nichts aufblitzt.
@@ -70,6 +71,12 @@
                 <a class="dropdown-item {% if request.endpoint == 'playbooks_page' %}active{% endif %}"
                    href="{{ url_for('playbooks_page') }}">
                   Playbook-Übersicht
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item {% if request.endpoint == 'tasks_page' %}active{% endif %}"
+                   href="{{ url_for('tasks_page') }}">
+                  Task-Übersicht
                 </a>
               </li>
             </ul>

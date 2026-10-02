@@ -46,28 +46,39 @@
 
   <div id="toast"></div>
 
-  {% if status == "success" %}
-    <div class="alert alert-success mt-4">Playbook erfolgreich ausgeführt.</div>
-  {% elif status == "error" %}
-    <div class="alert alert-danger mt-4">Playbook ist mit Fehlern beendet worden.</div>
-  {% endif %}
+  <div id="runResult">
+    {% if status == "success" %}
+      <div class="alert alert-success mt-4">Playbook erfolgreich ausgeführt.</div>
+    {% elif status == "error" %}
+      <div class="alert alert-danger mt-4">Playbook ist mit Fehlern beendet worden.</div>
+    {% endif %}
 
-  {% if command %}
-    <div class="mt-4">
-      <h2 class="h5">Befehl</h2>
-      <pre>{{ command }}</pre>
-    </div>
-  {% endif %}
+    {% if command %}
+      <div class="mt-4">
+        <h2 class="h5">Befehl</h2>
+        <pre>{{ command }}</pre>
+      </div>
+    {% endif %}
 
-  {% if output %}
-    <div class="mt-4">
-      <h2 class="h5">Ausgabe</h2>
-      <pre>{{ output }}</pre>
-    </div>
-  {% endif %}
+    {% if output %}
+      <div class="mt-4">
+        <h2 class="h5">Ausgabe</h2>
+        <pre>{{ output }}</pre>
+      </div>
+    {% endif %}
+  </div>
 
   <script>
-    document.getElementById("runForm").addEventListener("submit", function () {
+    const runForm = document.getElementById("runForm");
+    const runResult = document.getElementById("runResult");
+    const clearPreviousResult = () => runResult.replaceChildren();
+
+    runForm.querySelectorAll("select").forEach((select) => {
+      select.addEventListener("change", clearPreviousResult);
+    });
+
+    runForm.addEventListener("submit", function () {
+      clearPreviousResult();
       const button = document.getElementById("startButton");
       const playbook = document.getElementById("playbook").value;
       const toast = document.getElementById("toast");

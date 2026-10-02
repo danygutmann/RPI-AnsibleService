@@ -5,7 +5,7 @@
 
   tasks:
     - name: update system
-      ansible.builtin.import_tasks: tasks/update.yml
+      ansible.builtin.import_tasks: ../tasks/update.yml
 
     - name: Prüfen, ob Reboot erforderlich ist
       ansible.builtin.stat:
