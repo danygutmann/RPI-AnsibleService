@@ -5239,3 +5239,16 @@ Origin: /work/Config_wlan.yml:44:7
 2026-10-02 07:55:37,585 p=2039 u=root n=ansible INFO| PLAY RECAP *********************************************************************
 2026-10-02 07:55:37,585 p=2039 u=root n=ansible INFO| 192.168.178.110            : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
 2026-10-02 07:55:37,585 p=2039 u=root n=ansible INFO| 192.168.178.111            : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+2026-10-02 08:38:18,724 p=515 u=root n=ansible INFO| Starting galaxy collection install process
+2026-10-02 08:38:18,820 p=515 u=root n=ansible WARNING| [WARNING]: Collection at '/work/collections/ansible_collections/community/docker' does not have a MANIFEST.json file, nor has it galaxy.yml: cannot detect version.
+
+2026-10-02 08:38:18,822 p=515 u=root n=ansible INFO| Process install dependency map
+2026-10-02 08:38:23,139 p=515 u=root n=ansible ERROR| [ERROR]: Failed to find the collection dir deps: The collection galaxy.yml path '/work/collections/ansible_collections/community/docker/galaxy.yml' does not exist.
+
+Failed to find the collection dir deps: The collection galaxy.yml path '/work/collections/ansible_collections/community/docker/galaxy.yml' does not exist.
+
+<<< caused by >>>
+
+The collection galaxy.yml path '/work/collections/ansible_collections/community/docker/galaxy.yml' does not exist.
+
+
