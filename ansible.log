@@ -5301,3 +5301,19 @@ The collection galaxy.yml path '/work/collections/ansible_collections/community/
 2026-10-02 08:42:33,741 p=75 u=root n=ansible INFO| PLAY RECAP *********************************************************************
 2026-10-02 08:42:33,742 p=75 u=root n=ansible INFO| 192.168.178.110            : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
 2026-10-02 08:42:33,742 p=75 u=root n=ansible INFO| 192.168.178.111            : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+2026-10-02 09:09:06,106 p=140 u=root n=ansible INFO| PLAY [get RPI-SemiAutomator] ***************************************************
+2026-10-02 09:09:06,170 p=140 u=root n=ansible INFO| TASK [Git installieren] ********************************************************
+2026-10-02 09:09:32,378 p=140 u=root n=ansible INFO| ok: [192.168.178.110]
+2026-10-02 09:09:32,381 p=140 u=root n=ansible INFO| TASK [RPI-SemiAutomator klonen oder aktualisieren] *****************************
+2026-10-02 09:09:39,835 p=140 u=root n=ansible ERROR| [ERROR]: Task failed: Module failed: Failed to checkout copilot/docker-tool-raspberry-pi
+Origin: /work/Job_gitClone_RPI-AnsibleService.yml:14:7
+
+12         update_cache: true
+13
+14     - name: RPI-SemiAutomator klonen oder aktualisieren
+         ^ column 7
+
+
+2026-10-02 09:09:39,841 p=140 u=root n=ansible INFO| fatal: [192.168.178.110]: FAILED! => {"changed": false, "cmd": "/usr/bin/git checkout --force copilot/docker-tool-raspberry-pi", "msg": "Failed to checkout copilot/docker-tool-raspberry-pi", "rc": 1, "stderr": "error: pathspec 'copilot/docker-tool-raspberry-pi' did not match any file(s) known to git\n", "stderr_lines": ["error: pathspec 'copilot/docker-tool-raspberry-pi' did not match any file(s) known to git"], "stdout": "", "stdout_lines": []}
+2026-10-02 09:09:39,844 p=140 u=root n=ansible INFO| PLAY RECAP *********************************************************************
+2026-10-02 09:09:39,845 p=140 u=root n=ansible INFO| 192.168.178.110            : ok=1    changed=0    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0   
