@@ -5252,3 +5252,52 @@ Failed to find the collection dir deps: The collection galaxy.yml path '/work/co
 The collection galaxy.yml path '/work/collections/ansible_collections/community/docker/galaxy.yml' does not exist.
 
 
+2026-10-02 08:41:29,594 p=31 u=root n=ansible INFO| Starting galaxy collection install process
+2026-10-02 08:41:29,595 p=31 u=root n=ansible INFO| Process install dependency map
+2026-10-02 08:41:41,764 p=31 u=root n=ansible INFO| Starting collection install process
+2026-10-02 08:41:41,780 p=31 u=root n=ansible INFO| Downloading https://galaxy.ansible.com/api/v3/plugin/ansible/content/published/collections/artifacts/community-docker-5.3.0.tar.gz to /root/.ansible/tmp/ansible-local-318vdvqv4n/tmpx6mmjiff/community-docker-5.3.0-ayfydfoe
+2026-10-02 08:41:43,356 p=31 u=root n=ansible INFO| Installing 'community.docker:5.3.0' to '/work/collections/ansible_collections/community/docker'
+2026-10-02 08:41:44,129 p=31 u=root n=ansible INFO| community.docker:5.3.0 was installed successfully
+2026-10-02 08:41:44,143 p=31 u=root n=ansible INFO| Downloading https://galaxy.ansible.com/api/v3/plugin/ansible/content/published/collections/artifacts/community-general-13.4.0.tar.gz to /root/.ansible/tmp/ansible-local-318vdvqv4n/tmpx6mmjiff/community-general-13.4.0-06igeg38
+2026-10-02 08:41:45,734 p=31 u=root n=ansible INFO| Installing 'community.general:13.4.0' to '/work/collections/ansible_collections/community/general'
+2026-10-02 08:41:51,553 p=31 u=root n=ansible INFO| community.general:13.4.0 was installed successfully
+2026-10-02 08:41:51,666 p=31 u=root n=ansible INFO| Downloading https://galaxy.ansible.com/api/v3/plugin/ansible/content/published/collections/artifacts/community-library_inventory_filtering_v1-1.1.5.tar.gz to /root/.ansible/tmp/ansible-local-318vdvqv4n/tmpx6mmjiff/community-library_inventory_filtering_v1-1.1.5-w0lj724u
+2026-10-02 08:41:52,698 p=31 u=root n=ansible INFO| Installing 'community.library_inventory_filtering_v1:1.1.5' to '/work/collections/ansible_collections/community/library_inventory_filtering_v1'
+2026-10-02 08:41:52,750 p=31 u=root n=ansible INFO| community.library_inventory_filtering_v1:1.1.5 was installed successfully
+2026-10-02 08:42:15,220 p=40 u=root n=ansible INFO| PLAY [Internetzugang prüfen] ***************************************************
+2026-10-02 08:42:15,314 p=40 u=root n=ansible INFO| TASK [DNS testen] **************************************************************
+2026-10-02 08:42:17,694 p=40 u=root n=ansible INFO| ok: [192.168.178.110]
+2026-10-02 08:42:17,697 p=40 u=root n=ansible INFO| TASK [HTTPS testen] ************************************************************
+2026-10-02 08:42:19,151 p=40 u=root n=ansible INFO| ok: [192.168.178.110]
+2026-10-02 08:42:19,154 p=40 u=root n=ansible INFO| TASK [Ergebnisse anzeigen] *****************************************************
+2026-10-02 08:42:19,239 p=40 u=root n=ansible INFO| ok: [192.168.178.110] => {
+    "msg": [
+        "DNS rc=0",
+        "HTTPS status=200"
+    ]
+}
+2026-10-02 08:42:19,240 p=40 u=root n=ansible INFO| PLAY RECAP *********************************************************************
+2026-10-02 08:42:19,240 p=40 u=root n=ansible INFO| 192.168.178.110            : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+2026-10-02 08:42:29,550 p=75 u=root n=ansible INFO| PLAY [Internetzugang prüfen] ***************************************************
+2026-10-02 08:42:29,557 p=75 u=root n=ansible INFO| TASK [DNS testen] **************************************************************
+2026-10-02 08:42:30,839 p=75 u=root n=ansible INFO| ok: [192.168.178.110]
+2026-10-02 08:42:31,942 p=75 u=root n=ansible INFO| ok: [192.168.178.111]
+2026-10-02 08:42:31,945 p=75 u=root n=ansible INFO| TASK [HTTPS testen] ************************************************************
+2026-10-02 08:42:33,550 p=75 u=root n=ansible INFO| ok: [192.168.178.110]
+2026-10-02 08:42:33,701 p=75 u=root n=ansible INFO| ok: [192.168.178.111]
+2026-10-02 08:42:33,704 p=75 u=root n=ansible INFO| TASK [Ergebnisse anzeigen] *****************************************************
+2026-10-02 08:42:33,736 p=75 u=root n=ansible INFO| ok: [192.168.178.110] => {
+    "msg": [
+        "DNS rc=0",
+        "HTTPS status=200"
+    ]
+}
+2026-10-02 08:42:33,740 p=75 u=root n=ansible INFO| ok: [192.168.178.111] => {
+    "msg": [
+        "DNS rc=0",
+        "HTTPS status=200"
+    ]
+}
+2026-10-02 08:42:33,741 p=75 u=root n=ansible INFO| PLAY RECAP *********************************************************************
+2026-10-02 08:42:33,742 p=75 u=root n=ansible INFO| 192.168.178.110            : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+2026-10-02 08:42:33,742 p=75 u=root n=ansible INFO| 192.168.178.111            : ok=3    changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
