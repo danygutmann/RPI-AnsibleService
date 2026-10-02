@@ -5,7 +5,7 @@
 
   tasks:
     - name: update system
-      ansible.builtin.import_tasks: tasks/update.yml
+      ansible.builtin.import_tasks: ../tasks/update.yml
 
     - name: Root-Dateisystem auf gesamte verfügbare Partition erweitern
       ansible.builtin.command:
@@ -13,13 +13,13 @@
       become: true  
 
     - name: Cockpit
-      ansible.builtin.import_tasks: tasks/setup_cockpit.yml
+      ansible.builtin.import_tasks: ../tasks/setup_cockpit.yml
 
     - name : USB- und TTY-Einrichtung
-      ansible.builtin.import_tasks: tasks/setup_usb.yml
+      ansible.builtin.import_tasks: ../tasks/setup_usb.yml
 
     - name: VLANs konfigurieren
-      ansible.builtin.import_tasks: tasks/setup_vlan.yml
+      ansible.builtin.import_tasks: ../tasks/setup_vlan.yml
       
     - name: Python
-      ansible.builtin.import_tasks: tasks/setup_python.yml
+      ansible.builtin.import_tasks: ../tasks/setup_python.yml

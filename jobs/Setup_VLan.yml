@@ -5,4 +5,4 @@
 
   tasks:
     - name: VLANs konfigurieren
-      ansible.builtin.import_tasks: tasks/setup_vlan.yml
+      ansible.builtin.import_tasks: ../tasks/setup_vlan.yml

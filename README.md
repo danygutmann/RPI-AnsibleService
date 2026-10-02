@@ -17,9 +17,10 @@ Kleine Flask-Weboberfläche zum Ausführen von Ansible-Playbooks auf Raspberry P
 
 ## Funktionen
 
-- Weboberfläche (Port `5000`) mit Seiten für Start (`/`), Inventories (`/inventories`) und Playbooks (`/playbooks`)
-- Erkennt automatisch alle `*.yml`/`*.yaml`-Playbooks im Projektverzeichnis (Dateien mit `hosts:` oder `import_playbook:`)
+- Weboberfläche (Port `5000`) mit Runner (`/`), Inventories (`/inventories`), Playbooks (`/playbooks`) und Tasks (`/tasks`)
+- Erkennt automatisch alle `*.yml`/`*.yaml`-Playbooks in `jobs/` (Dateien mit `hosts:` oder `import_playbook:`)
 - Erkennt Inventories im Ordner `inventory/` (`.ini`, `.yml`, `.yaml`)
+- Ermöglicht das Bearbeiten und Anlegen von Playbooks, Tasks und Inventories im Browser
 - Es werden nur aktuell angebotene Dateinamen akzeptiert (keine beliebigen Pfade); Timeout 30 Minuten
 
 ## Projektstruktur
@@ -33,7 +34,7 @@ Kleine Flask-Weboberfläche zum Ausführen von Ansible-Playbooks auf Raspberry P
 | `ansible.cfg` | Ansible-Konfiguration (`host_key_checking = False`, Log `ansible.log`) |
 | `inventory/` | Inventories, z. B. `RPI_A.ini`, `RPI_B.ini`, `Team_X.ini` |
 | `inventory.ini` | Standard-Inventory für die CLI-Nutzung |
-| `Job_*.yml`, `Setup_*.yml`, `Config_wlan.yml`, `Check_IsOnline.yml`, `site.yml` | Playbooks |
+| `jobs/` | Ausführbare Playbooks, z. B. Jobs, Setup-Dateien und `site.yml` |
 | `tasks/` | Wiederverwendbare Task-Dateien (Docker, Portainer, Python, Git, Cockpit, USB, VLAN …) |
 | `templates/`, `static/` | HTML-Templates, CSS und JS der Weboberfläche |
 | `collections/` | Ansible-Collections (beim Image-Build installiert, nicht im Git) |
@@ -88,7 +89,7 @@ docker compose -f Docker_compose.yml exec ansible-web \
 
 ```bash
 docker compose -f Docker_compose.yml exec ansible-web \
-  ansible-playbook -i /app/inventory/RPI_A.ini /app/Job_Ping.yml
+  ansible-playbook -i /app/inventory/RPI_A.ini /app/jobs/Job_Ping.yml
 ```
 
 ### SSH-Schlüssel statt Passwort nutzen
@@ -109,7 +110,7 @@ Inventory-Eintrag ohne Passwort:
 
 ### Neue Raspberry Pis hinzufügen
 
-1. Neue Datei in `inventory/` anlegen (siehe unten).
+1. Neue Datei in `inventory/` anlegen oder über die Inventories-Seite im Browser erstellen.
 2. Image neu bauen (oder Entwicklungsmodus nutzen) – das Inventory erscheint automatisch in der Auswahl.
 
 ### Konfiguration über Umgebungsvariablen
@@ -141,13 +142,13 @@ Passwörter besser mit [Ansible Vault](https://docs.ansible.com/ansible/latest/v
 | `Job_gitClone.yml`, `Job_Artifactory.yml` | Git-Clone / Artifactory |
 | `Config_wlan.yml`, `Setup_VLan.yml` | Netzwerk (WLAN, VLAN) |
 | `Setup_general.yml`, `Setup_cockpit.yml`, `Setup_usb.yml` | Einrichtung (Basis, Cockpit, USB) |
-| `site.yml` | Sammel-Playbook (Tasks aus `tasks/`) |
+| `jobs/site.yml` | Sammel-Playbook (Tasks aus `tasks/`) |
 
-Neue Playbooks einfach als `*.yml` mit `hosts:` im Projektverzeichnis ablegen.
+Neue Playbooks einfach als `*.yml` mit `hosts:` in `jobs/` ablegen oder über die Playbook-Übersicht erstellen. Wiederverwendbare Tasks verwaltest du unter `/tasks`.
 
 ## Sicherheitshinweise
 
-- Die Weboberfläche hat **keine Authentifizierung** und kann Befehle als `root` auf Zielhosts ausführen. Nur im vertrauenswürdigen Netz betreiben, z. B. Port nur lokal binden: `"127.0.0.1:5000:5000"`.
+- Die Weboberfläche hat **keine Authentifizierung**, kann Dateien im Projekt ändern und Befehle als `root` auf Zielhosts ausführen. Nur im vertrauenswürdigen Netz betreiben, z. B. Port nur lokal binden: `"127.0.0.1:5000:5000"`.
 - Keine echten Passwörter ins Repository committen; Standardpasswörter (`pi`) ändern.
 - `host_key_checking = False` in `ansible.cfg` ist bequem, aber unsicher.
 
