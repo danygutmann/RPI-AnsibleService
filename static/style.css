@@ -1,0 +1,51 @@
+/* Die obere Leiste bleibt dunkel, unabhängig vom gewählten Seitendesign. */
+.navbar {
+  background-color: #243247;
+}
+
+.navbar .dropdown-toggle {
+  cursor: pointer;
+}
+
+pre {
+  background: var(--bs-body-bg);
+  color: var(--bs-body-color);
+  border: 1px solid var(--bs-border-color);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  line-height: 1.5;
+}
+
+#toast {
+  visibility: hidden;
+  position: fixed;
+  top: 5rem;
+  right: 1.5rem;
+  background: var(--bs-emphasis-color);
+  color: var(--bs-body-bg);
+  padding: 1rem 1.5rem;
+  border-radius: 0.5rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 9999;
+}
+
+#toast.show {
+  visibility: visible;
+  opacity: 1;
+}
+
+.file-list {
+  list-style: none;
+  padding: 0;
+}
+
+.file-list li {
+  padding: 0.85rem 1rem;
+  margin-bottom: 0.5rem;
+  background: var(--bs-body-bg);
+  border: 1px solid var(--bs-border-color);
+  border-radius: 0.5rem;
+}

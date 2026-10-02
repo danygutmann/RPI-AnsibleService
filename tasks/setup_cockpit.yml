@@ -1,0 +1,15 @@
+- name: Cockpit installieren
+  ansible.builtin.apt:
+    name: cockpit
+    state: present
+    update_cache: true
+
+- name: Cockpit aktivieren und starten
+  ansible.builtin.systemd:
+    name: cockpit.socket
+    enabled: true
+    state: started
+
+# Danach öffnest du im Browser https://<IP-DEINES-PI>:9090. Beim ersten Aufruf kann wegen des zunächst selbstsignierten Zertifikats eine Browserwarnung erscheinen. 
+# Falls apt das Paket nicht findet, prüfe auf dem Pi zunächst mit apt-cache policy cockpit, ob es in den Paketquellen deines Raspberry Pi OS verfügbar ist. (cockpit-project.org)
+# Sicherheit: Den Web-Port nur im vertrauenswürdigen Heimnetz oder über ein VPN erreichbar machen, nicht einfach per Router-Portfreigabe ins Internet stellen.

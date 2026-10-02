@@ -1,0 +1,48 @@
+- name: Statische IP und Gateway setzen
+  hosts: all
+  become: true
+  gather_facts: false
+
+  tasks:
+    - name: dhcpcd.conf anpassen
+      ansible.builtin.blockinfile:
+        path: /etc/dhcpcd.conf
+        marker: "# {mark} ANSIBLE MANAGED BLOCK"
+        block: |
+          interface wlan0
+          static ip_address=192.168.178.110
+          static routers=192.168.178.1
+          static domain_name_servers=192.168.178.1 8.8.8.8
+
+    - name: VLAN-Interfaces anzeigen
+      ansible.builtin.command: ip -o link show
+      register: ip_links
+      changed_when: false
+
+    - name: VLAN-Interfaces löschen
+      ansible.builtin.shell: |
+        ip link delete {{ item }}
+      loop: >-
+        {{
+          ip_links.stdout_lines
+          | map('regex_search', '^[0-9]+: ([^:@]+(?:\\.[0-9]+)+)[:@]', '\\1')
+          | select('string')
+          | list
+        }}
+      ignore_errors: true
+
+    - name: Ansible-Block aus dhcpcd.conf entfernen
+      ansible.builtin.blockinfile:
+        path: /etc/dhcpcd.conf
+        marker: "# {mark} ANSIBLE MANAGED BLOCK"
+        state: absent
+
+    - name: eth0 wieder per DHCP holen
+      ansible.builtin.command: dhclient eth0
+      ignore_errors: true
+
+    - name: dhcpcd neu starten
+      ansible.builtin.service:
+        name: dhcpcd
+        state: restarted
+      ignore_errors: true

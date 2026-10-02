@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Runner – Testbench Ansible{% endblock %}
+
+{% block content %}
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="h3 mb-0">Ansible Runner</h1>
+  </div>
+
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <form method="post" id="runForm">
+        <div class="mb-3">
+          <label for="inventory" class="form-label">Inventory</label>
+          <select name="inventory" id="inventory" class="form-select" required>
+            {% for inv in inventories %}
+              <option value="{{ inv }}" {% if inv == selected_inventory %}selected{% endif %}>{{ inv }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label for="playbook" class="form-label">Playbook</label>
+          <select name="playbook" id="playbook" class="form-select" required>
+            {% for pb in playbooks %}
+              <option value="{{ pb }}" {% if pb == selected_playbook %}selected{% endif %}>{{ pb }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <button type="submit" id="startButton" class="btn btn-primary"
+                {% if not inventories or not playbooks %}disabled{% endif %}>
+          Start
+        </button>
+
+        <div class="form-text mt-2">
+          Startet das gewählte Playbook mit dem gewählten Inventory.
+        </div>
+      </form>
+    </div>
+  </div>
+
+  {% if not inventories or not playbooks %}
+    <div class="alert alert-danger mt-4">Es wurden keine Inventories oder Playbooks gefunden.</div>
+  {% endif %}
+
+  <div id="toast"></div>
+
+  {% if status == "success" %}
+    <div class="alert alert-success mt-4">Playbook erfolgreich ausgeführt.</div>
+  {% elif status == "error" %}
+    <div class="alert alert-danger mt-4">Playbook ist mit Fehlern beendet worden.</div>
+  {% endif %}
+
+  {% if command %}
+    <div class="mt-4">
+      <h2 class="h5">Befehl</h2>
+      <pre>{{ command }}</pre>
+    </div>
+  {% endif %}
+
+  {% if output %}
+    <div class="mt-4">
+      <h2 class="h5">Ausgabe</h2>
+      <pre>{{ output }}</pre>
+    </div>
+  {% endif %}
+
+  <script>
+    document.getElementById("runForm").addEventListener("submit", function () {
+      const button = document.getElementById("startButton");
+      const playbook = document.getElementById("playbook").value;
+      const toast = document.getElementById("toast");
+
+      button.disabled = true;
+      button.textContent = "⏳ Playbook läuft…";
+
+      toast.textContent = "▶ " + playbook + " wurde gestartet";
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 2500);
+    });
+  </script>
+{% endblock %}

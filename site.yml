@@ -1,0 +1,26 @@
+- name: Hosts neu starten
+  hosts: all
+  become: true
+  gather_facts: false
+
+  tasks:
+    #- name: Basis konfigurieren
+    #  ansible.builtin.import_tasks: tasks/base.yml
+
+    #- name: Docker installieren
+    #  ansible.builtin.import_tasks: tasks/docker.yml
+
+    #- name: Portainer einrichten
+    #  ansible.builtin.import_tasks: tasks/portainer.yml
+
+    #- name: Python einrichten
+    #  ansible.builtin.import_tasks: tasks/python.yml  
+
+    #- name: Git installieren
+    #  ansible.builtin.import_tasks: tasks/git.yml
+
+    #- name: Cockpit installieren
+    #  ansible.builtin.import_tasks: tasks/cockpit.yml
+
+    - name: VLANs konfigurieren
+      ansible.builtin.import_tasks: tasks/network_vlan.yml

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Inventories – Testbench Ansible{% endblock %}
+
+{% block content %}
+  <h1>Inventories</h1>
+  <p>Dateien aus <code>/work/inventory/</code>:</p>
+
+  {% if inventories %}
+    <ul class="file-list">
+      {% for inventory in inventories %}
+        <li>{{ inventory }}</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>Keine Inventory-Dateien gefunden.</p>
+  {% endif %}
+{% endblock %}

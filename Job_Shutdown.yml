@@ -1,0 +1,11 @@
+- name: Shutdown hosts
+  hosts: all
+  become: true
+  gather_facts: false
+
+  tasks:
+    - name: shutdown hosts
+      ansible.builtin.shell: shutdown -h now
+      async: 1
+      poll: 0
+      ignore_errors: true

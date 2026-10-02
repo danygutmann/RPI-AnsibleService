@@ -1,0 +1,95 @@
+# ---------------------------------
+# Portainer Konfiguration
+# ---------------------------------
+# portainer_reset:
+#   true  -> vorhandenen Container + Daten löschen und neu aufsetzen
+#   false -> bestehende Installation behalten
+#
+- name: Portainer Variablen setzen
+  ansible.builtin.set_fact:
+    portainer_reset: false
+    portainer_admin_username: "admin"
+    portainer_admin_password: "H@rm@n!2026TopSecretPassword!!"
+  no_log: true
+
+- name: Portainer Container entfernen bei Reset
+  community.docker.docker_container:
+    name: portainer
+    state: absent
+    force_kill: true
+  when: portainer_reset | bool
+
+- name: Portainer Datenvolume entfernen bei Reset
+  community.docker.docker_volume:
+    name: portainer_data
+    state: absent
+  when: portainer_reset | bool
+
+- name: Portainer Datenvolume anlegen
+  community.docker.docker_volume:
+    name: portainer_data
+    state: present
+
+- name: Portainer starten ohne Setup-Token
+  community.docker.docker_container:
+    name: portainer
+    image: portainer/portainer-ce:lts
+    state: started
+    recreate: "{{ portainer_reset | bool }}"
+    restart_policy: always
+    command: "--no-setup-token"
+    published_ports:
+      - "9443:9443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+
+- name: Warten bis Portainer erreichbar ist
+  ansible.builtin.wait_for:
+    host: 127.0.0.1
+    port: 9443
+    delay: 3
+    timeout: 60
+
+- name: Prüfen ob Portainer bereits initialisiert ist
+  ansible.builtin.uri:
+    url: "https://127.0.0.1:9443/api/users/admin/check"
+    method: GET
+    validate_certs: false
+    status_code:
+      - 204
+      - 404
+  register: portainer_admin_check
+  changed_when: false
+
+- name: Portainer Admin initialisieren
+  ansible.builtin.uri:
+    url: "https://127.0.0.1:9443/api/users/admin/init"
+    method: POST
+    body_format: json
+    body:
+      Username: "{{ portainer_admin_username }}"
+      Password: "{{ portainer_admin_password }}"
+    validate_certs: false
+    status_code: 200
+  when: portainer_admin_check.status == 404
+  no_log: true
+
+- name: Portainer Status ausgeben
+  ansible.builtin.debug:
+    msg: >-
+      {% if portainer_admin_check.status == 404 %}
+      Portainer wurde neu initialisiert.
+      {% else %}
+      Portainer war bereits eingerichtet.
+      {% endif %}
+
+- name: Portainer Container anzeigen
+  ansible.builtin.command:
+    cmd: docker ps --filter name=portainer
+  register: portainer_ps
+  changed_when: false
+
+- name: docker ps Ausgabe anzeigen
+  ansible.builtin.debug:
+    var: portainer_ps.stdout_lines

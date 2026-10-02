@@ -1,0 +1,97 @@
+---
+- name: Benötigte USB- und Python-Pakete installieren
+  become: true
+  ansible.builtin.apt:
+    name:
+      - usbutils
+      - python3-venv
+    state: present
+    update_cache: true
+
+- name: usbutils installieren
+      ansible.builtin.apt:
+        name: usbutils
+        state: present
+        update_cache: true
+      become: true
+
+- name: User zur dialout-Gruppe hinzufügen
+  become: true
+  ansible.builtin.user:
+    name: "{{ target_user }}"
+    groups:
+      - dialout
+    append: true
+
+- name: Zielverzeichnis für Skripte anlegen
+  ansible.builtin.file:
+    path: "{{ scripts_dir }}"
+    state: directory
+    owner: "{{ target_user }}"
+    group: "{{ target_user }}"
+    mode: "0755"
+
+- name: USB-TTY-Skript anlegen
+  ansible.builtin.copy:
+    dest: "{{ scripts_dir }}/usb_tty_list.sh"
+    owner: "{{ target_user }}"
+    group: "{{ target_user }}"
+    mode: "0755"
+    content: |
+      #!/usr/bin/env bash
+
+      get_property() {
+        udevadm info --query=property --name="$dev" |
+          sed -n "s/^$1=//p"
+      }
+
+      printf "%-13s %-10s %-16s %-9s %s\n" \
+        "TTY" "VID:PID" "PRODUKT" "IF/PORT" "GERÄT"
+
+      printf "%-13s %-10s %-16s %-9s %s\n" \
+        "---" "-------" "-------" "-------" "-----"
+
+      for dev in /dev/ttyACM* /dev/ttyUSB*; do
+        [ -e "$dev" ] || continue
+
+        vid=$(get_property ID_VENDOR_ID)
+        pid=$(get_property ID_MODEL_ID)
+        product=$(get_property ID_MODEL)
+        ifnum=$(get_property ID_USB_INTERFACE_NUM)
+        vendor_db=$(get_property ID_VENDOR_FROM_DATABASE)
+        model_db=$(get_property ID_MODEL_FROM_DATABASE)
+
+        if [ "$vid:$pid" = "0403:6011" ] && [ -n "$ifnum" ]; then
+          port_letter=$(printf "\\$(printf '%03o' "$((65 + 10#$ifnum))")")
+          port="$ifnum/$port_letter"
+        else
+          port="$ifnum"
+        fi
+
+        printf "%-13s %-10s %-16s %-9s %s\n" \
+          "$dev" \
+          "$vid:$pid" \
+          "${product:0:16}" \
+          "$port" \
+          "$vendor_db ${model_db:-$product}"
+      done
+
+- name: lsusb ausführen
+  ansible.builtin.command:
+    cmd: lsusb
+  register: lsusb_output
+  changed_when: false
+
+- name: USB-Geräte anzeigen
+  ansible.builtin.debug:
+    var: lsusb_output.stdout_lines
+
+- name: USB-TTY-Skript ausführen
+  ansible.builtin.command:
+    cmd: "{{ scripts_dir }}/usb_tty_list.sh"
+  register: usb_tty_output
+  changed_when: false
+
+- name: USB-TTY-Zuordnung anzeigen
+  ansible.builtin.debug:
+    var: usb_tty_output.stdout_lines

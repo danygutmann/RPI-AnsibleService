@@ -1,0 +1,19 @@
+- name: Artefakt aus Artifactory laden
+  hosts: all
+  gather_facts: false
+
+  vars:
+    artifactory_url: "https://artifactory.example.com/artifactory/my-repo/path/app.tar.gz"
+    target_path: "/tmp/app.tar.gz"
+    artifactory_user: "svlad"
+    artifactory_token: "AP5RB8DtDYvS73CTdgu21sNvX9FFgqreL992ah"
+
+  tasks:
+    - name: Artefakt herunterladen
+      ansible.builtin.get_url:
+        url: "{{ artifactory_url }}"
+        dest: "vtt-ngcp-cgw-daily-builds"
+        url_username: "{{ artifactory_user }}"
+        url_password: "{{ artifactory_token }}"
+        force_basic_auth: true
+        mode: "0644"

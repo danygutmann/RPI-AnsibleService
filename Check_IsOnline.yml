@@ -1,0 +1,25 @@
+- name: Internetzugang prüfen
+  hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: DNS testen
+      ansible.builtin.command: getent hosts google.com
+      register: dns_test
+      changed_when: false
+      failed_when: false
+
+    - name: HTTPS testen
+      ansible.builtin.uri:
+        url: https://www.google.com
+        method: GET
+        return_content: false
+        status_code: 200
+      register: web_test
+      failed_when: false
+
+    - name: Ergebnisse anzeigen
+      ansible.builtin.debug:
+        msg:
+          - "DNS rc={{ dns_test.rc }}"
+          - "HTTPS status={{ web_test.status | default('n/a') }}"

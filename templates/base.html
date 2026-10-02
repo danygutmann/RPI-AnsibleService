@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="de" data-bs-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Testbench Commander{% endblock %}</title>
+
+  <script>
+    // Vor dem Laden des CSS anwenden, damit beim Seitenwechsel nichts aufblitzt.
+    try {
+      if (localStorage.getItem("ansible-theme") === "dark") {
+        document.documentElement.setAttribute("data-bs-theme", "dark");
+      }
+    } catch (_) {}
+  </script>
+
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+    crossorigin="anonymous"
+  >
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body class="bg-body-tertiary">
+  <nav class="navbar navbar-expand-lg shadow-sm" data-bs-theme="dark">
+    <div class="container">
+      <a class="navbar-brand fw-semibold" href="{{ url_for('index') }}">
+        Testbench Commander
+      </a>
+
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-bs-toggle="collapse"
+        data-bs-target="#mainNav"
+        aria-controls="mainNav"
+        aria-expanded="false"
+        aria-label="Navigation öffnen"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav ms-lg-auto align-items-lg-center gap-lg-2">
+          <li class="nav-item dropdown">
+            <button
+              class="nav-link dropdown-toggle border-0 bg-transparent"
+              type="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              Ansible
+            </button>
+            <ul class="dropdown-menu dropdown-menu-lg-end">
+              <li>
+                <a class="dropdown-item {% if request.endpoint == 'index' %}active{% endif %}"
+                   href="{{ url_for('index') }}">
+                  Runner
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item {% if request.endpoint == 'inventories_page' %}active{% endif %}"
+                   href="{{ url_for('inventories_page') }}">
+                  Inventories
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item {% if request.endpoint == 'playbooks_page' %}active{% endif %}"
+                   href="{{ url_for('playbooks_page') }}">
+                  Playbook-Übersicht
+                </a>
+              </li>
+            </ul>
+          </li>
+
+          <li class="nav-item dropdown">
+            <button
+              class="nav-link dropdown-toggle border-0 bg-transparent"
+              type="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              Weitere Links
+            </button>
+            <ul class="dropdown-menu dropdown-menu-lg-end">
+              <li>
+                <a class="dropdown-item"
+                   href="https://192.168.178.110:9090"
+                   target="_blank" rel="noopener noreferrer">
+                  Cockpit
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item"
+                   href="https://192.168.178.110:9443"
+                   target="_blank" rel="noopener noreferrer">
+                  Portainer
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item"
+                   href="http://192.168.178.110:8080/"
+                   target="_blank" rel="noopener noreferrer">
+                  Console
+                </a>
+              </li>
+            </ul>
+          </li>
+
+          <li class="nav-item">
+            <button
+              id="themeToggle"
+              class="btn btn-sm btn-outline-light my-2 my-lg-0"
+              type="button"
+              aria-label="Dunkles Design einschalten"
+              aria-pressed="false"
+            >
+              ◐ Dunkel
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container py-4">
+    {% block content %}{% endblock %}
+  </main>
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+    crossorigin="anonymous"
+  ></script>
+  <script src="{{ url_for('static', filename='theme.js') }}"></script>
+</body>
+</html>

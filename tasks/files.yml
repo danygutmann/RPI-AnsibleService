@@ -1,0 +1,7 @@
+- name: Beispiel-Datei ablegen
+  ansible.builtin.copy:
+    dest: /home/pi/test.txt
+    content: "Hallo vom Ansible-Playbook\n"
+    owner: pi
+    group: pi
+    mode: "0644"

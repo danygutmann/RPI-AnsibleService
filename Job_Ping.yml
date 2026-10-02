@@ -1,0 +1,19 @@
+- name: Hosts prüfen und MAC-Adresse anzeigen
+  hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: Verbindung prüfen
+      ansible.builtin.ping:
+
+    - name: Netzwerkdaten abfragen
+      ansible.builtin.setup:
+        gather_subset:
+          - "!all"
+          - network
+
+    - name: MAC-Adresse anzeigen
+      ansible.builtin.debug:
+        msg: >-
+          {{ inventory_hostname }}:
+          {{ ansible_facts.get('default_ipv4', {}).get('macaddress', 'nicht verfügbar') }}

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Playbooks – Testbench Ansible{% endblock %}
+
+{% block content %}
+  <h1>Playbooks</h1>
+  <p>Auswählbare Playbooks direkt in <code>/work/</code>:</p>
+
+  {% if playbooks %}
+    <ul class="file-list">
+      {% for playbook in playbooks %}
+        <li>{{ playbook }}</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>Keine Playbooks gefunden.</p>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,8 @@
+- name: Setup Cockpit
+  hosts: all
+  become: true
+  gather_facts: false
+
+  tasks:
+    - name: setup cockpit
+      ansible.builtin.import_tasks: tasks/setup_cockpit.yml

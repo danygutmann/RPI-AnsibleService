@@ -1,0 +1,89 @@
+- name: ADB auf Raspberry Pi einrichten
+  hosts: raspberrypi
+  become: true
+  vars:
+    adb_user: pi
+    adb_home: "/home/pi"
+  tasks:
+    - name: adb und usbutils installieren
+      ansible.builtin.apt:
+        name:
+          - adb
+          - usbutils
+        state: present
+        update_cache: true
+
+    - name: .android Verzeichnis anlegen
+      ansible.builtin.file:
+        path: "{{ adb_home }}/.android"
+        state: directory
+        owner: "{{ adb_user }}"
+        group: "{{ adb_user }}"
+        mode: "0700"
+
+    - name: adbkey kopieren
+      ansible.builtin.copy:
+        src: files/adbkey
+        dest: "{{ adb_home }}/.android/adbkey"
+        owner: "{{ adb_user }}"
+        group: "{{ adb_user }}"
+        mode: "0600"
+
+    - name: adb devices mit explizitem Key-Pfad ausführen
+      ansible.builtin.command: adb devices
+      become: true
+      become_user: "{{ adb_user }}"
+      environment:
+        ADB_VENDOR_KEYS: "{{ adb_home }}/.android/adbkey"
+      register: adb_devices
+      changed_when: false
+
+    - name: User zur plugdev-Gruppe hinzufügen
+      ansible.builtin.user:
+        name: "{{ adb_user }}"
+        groups: plugdev
+        append: true
+
+    - name: Android udev-Regeln setzen
+      ansible.builtin.copy:
+        dest: /etc/udev/rules.d/51-android.rules
+        mode: "0644"
+        content: |
+          SUBSYSTEM=="usb", ATTR{idVendor}=="18d1", MODE="0660", GROUP="plugdev"
+          SUBSYSTEM=="usb", ATTR{idVendor}=="04e8", MODE="0660", GROUP="plugdev"
+          SUBSYSTEM=="usb", ATTR{idVendor}=="22b8", MODE="0660", GROUP="plugdev"
+          SUBSYSTEM=="usb", ATTR{idVendor}=="0fce", MODE="0660", GROUP="plugdev"
+          SUBSYSTEM=="usb", ATTR{idVendor}=="12d1", MODE="0660", GROUP="plugdev"
+          SUBSYSTEM=="usb", ATTR{idVendor}=="2a70", MODE="0660", GROUP="plugdev"
+
+    - name: udev-Regeln neu laden
+      ansible.builtin.command: udevadm control --reload-rules
+      changed_when: false
+
+    - name: udev triggern
+      ansible.builtin.command: udevadm trigger
+      changed_when: false
+
+    - name: adb server stoppen
+      ansible.builtin.command: adb kill-server
+      become: true
+      become_user: "{{ adb_user }}"
+      changed_when: false
+      failed_when: false
+
+    - name: adb server starten
+      ansible.builtin.command: adb start-server
+      become: true
+      become_user: "{{ adb_user }}"
+      changed_when: false
+
+    - name: adb devices anzeigen
+      ansible.builtin.command: adb devices
+      become: true
+      become_user: "{{ adb_user }}"
+      register: adb_devices
+      changed_when: false
+
+    - name: adb Ausgabe anzeigen
+      ansible.builtin.debug:
+        var: adb_devices.stdout_lines

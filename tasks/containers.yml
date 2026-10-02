@@ -1,0 +1,8 @@
+- name: Nginx Container starten
+  community.docker.docker_container:
+    name: nginx-test
+    image: nginx:latest
+    state: started
+    restart_policy: unless-stopped
+    ports:
+      - "8080:80"

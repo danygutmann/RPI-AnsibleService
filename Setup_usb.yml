@@ -1,0 +1,8 @@
+- name: Setup USB
+  hosts: all
+  become: true
+  gather_facts: false
+
+  tasks:
+    - name: USB- und TTY-Einrichtung laden
+      ansible.builtin.import_tasks: tasks/setup_usb.yml

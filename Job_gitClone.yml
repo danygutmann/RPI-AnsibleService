@@ -1,0 +1,54 @@
+- name: Repro clonen
+  hosts: all
+  become: true
+  gather_facts: false
+
+  tasks:
+    - name: Git installieren
+      become: true
+      ansible.builtin.apt:
+        name: git
+        state: present
+        update_cache: true
+
+    - name: RPI-SemiAutomator klonen oder aktualisieren
+      become: true
+      become_user: pi
+      ansible.builtin.git:
+        repo: "https://github.com/danygutmann/RPI-SemiAutomator.git"
+        dest: "/home/pi/RPI-SemiAutomator"
+        version: "copilot/docker-tool-raspberry-pi"
+        update: true
+
+    - name: Dateien im geklonten Branch anzeigen
+      become: true
+      become_user: pi
+      ansible.builtin.command:
+        cmd: git ls-files
+        chdir: /home/pi/RPI-SemiAutomator
+      register: project_files
+      changed_when: false
+
+    - name: Projektdateien ausgeben
+      ansible.builtin.debug:
+        var: project_files.stdout_lines
+
+    - name: Docker Compose im Vordergrund starten
+      become: true
+      become_user: pi
+      ansible.builtin.command:
+        cmd: docker compose up --build
+        chdir: "/home/pi/RPI-SemiAutomator"
+
+    - name: Laufende Container anzeigen
+      become: true
+      become_user: pi
+      ansible.builtin.command:
+        cmd: docker compose ps
+        chdir: "/home/pi/RPI-SemiAutomator"
+      register: compose_ps
+      changed_when: false
+
+    - name: Containerstatus anzeigen
+      ansible.builtin.debug:
+        var: compose_ps.stdout_lines
