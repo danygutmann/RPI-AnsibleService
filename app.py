@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 import shlex
 import subprocess
@@ -6,7 +7,7 @@ from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
-BASE_DIR = Path("/work")
+BASE_DIR = Path(os.environ.get("APP_DIR", Path(__file__).resolve().parent))
 INVENTORY_DIR = BASE_DIR / "inventory"
 FILE_EXTENSIONS = {".ini", ".yml", ".yaml"}
 
