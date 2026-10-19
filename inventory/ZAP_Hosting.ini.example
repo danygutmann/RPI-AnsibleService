@@ -1,0 +1,7 @@
+# Platzhalter – kopiere nach inventory/ZAP_Hosting.ini und passe an.
+[zap_hosting]
+server1 ansible_host=SERVER_IP_1 ansible_user=SERVER_USER_1
+server2 ansible_host=SERVER_IP_2 ansible_user=SERVER_USER_2 ansible_port=2222
+
+[zap_hosting:vars]
+ansible_ssh_private_key_file=/run/secrets/zap_hosting_rsa

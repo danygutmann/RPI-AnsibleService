@@ -146,6 +146,56 @@ Passwörter besser mit [Ansible Vault](https://docs.ansible.com/ansible/latest/v
 
 Neue Playbooks einfach als `*.yml` mit `hosts:` in `jobs/` ablegen oder über die Playbook-Übersicht erstellen. Wiederverwendbare Tasks verwaltest du unter `/tasks`.
 
+## SSH-Schlüssel und ZAP-Hosting (externe Linux-Server)
+
+Private Schlüssel werden **nie** ins Image, nach Git oder über die Weboberfläche bereitgestellt, sondern per read-only Mount eingebunden.
+
+1. Schlüssel auf dem NAS ablegen, z. B. `/volume1/docker/secrets/zap_hosting_rsa`, außerhalb des Repositories:
+   `chmod 600 zap_hosting_rsa` und Eigentümer = Benutzer, der den Container betreibt (der Container läuft als `root`, dort genügt `600`).
+2. Hostpfad konfigurieren (`.env` neben der Compose-Datei oder Portainer-Variable; **ohne** Schlüsselinhalt):
+   `SSH_KEY_HOST_PATH=/volume1/docker/secrets/zap_hosting_rsa`
+   Optional: `SSH_KEY_CONTAINER_PATH` (Standard `/run/secrets/zap_hosting_rsa`). Ist `SSH_KEY_HOST_PATH` leer/nicht gesetzt, wird `/dev/null` gemountet: der Container startet, der Verbindungstest meldet aber „kein gültiger privater SSH-Schlüssel“. Bestehende Volumes/Daten bleiben unberührt.
+3. Inventory anlegen (Seite *Inventories*, Vorlage `inventory/ZAP_Hosting.ini.example`, nur Platzhalter):
+
+```ini
+[zap_hosting]
+server1 ansible_host=SERVER_IP_1 ansible_user=SERVER_USER_1
+server2 ansible_host=SERVER_IP_2 ansible_user=SERVER_USER_2 ansible_port=2222
+
+[zap_hosting:vars]
+ansible_ssh_private_key_file=/run/secrets/zap_hosting_rsa
+```
+
+Gruppenschlüssel stehen in `[gruppe:vars]`; ein individueller Schlüssel pro Server wird als `ansible_ssh_private_key_file=...` an der Host-Zeile gesetzt. Benutzer und Port: `ansible_user`, `ansible_port`. Bestehende Inventories werden nicht verändert.
+
+### Verbindungstest
+
+Weboberfläche: *Inventories → Verbindungstest* (`/connection-test`), Inventory und optional Host wählen. Es läuft `ansible <host|all> -i inventory/<datei> -m ping` (nur lesend, Argumentliste, nur bekannte Inventory-Dateien und Hosts). Vorab wird der Schlüssel geprüft (fehlt / nicht lesbar / kein privater Schlüssel); Schlüsselinhalte werden nie ausgegeben.
+CLI: `docker exec rpi-ansible-service ansible all -i inventory/ZAP_Hosting.ini -m ping`
+Hinweis: `ping` benötigt Python auf dem Zielsystem.
+
+### Fehlersuche SSH
+
+| Meldung | Ursache |
+|---|---|
+| Schlüsseldatei nicht gefunden | Mount/`SSH_KEY_HOST_PATH` prüfen |
+| nicht lesbar | Rechte (`600`) und Eigentümer prüfen |
+| Anmeldung verweigert | Benutzer falsch oder Schlüssel nicht beim Server hinterlegt |
+| Zeitüberschreitung / kein Weg / abgelehnt | IP, Port, Firewall prüfen |
+| Python fehlt | Python auf dem Zielsystem installieren |
+
+### Geschützte Schlüssel (Passphrase)
+
+Die Passphrase wird nicht entfernt oder gespeichert. Empfohlen: einen dedizierten, unverschlüsselten Schlüssel nur für diesen Zweck mit eingeschränkten Rechten beim Provider verwenden, oder `ssh-agent` mit `SSH_AUTH_SOCK` in den Container durchreichen.
+
+### Host-Key-Prüfung
+
+`ansible.cfg` setzt weiterhin `host_key_checking = False` (unverändert, unsicher: Man-in-the-Middle möglich). Sicherer: `host_key_checking = True` setzen und eine `known_hosts` read-only nach `/root/.ssh/known_hosts` mounten (Inhalt via `ssh-keyscan -H SERVER_IP_1` nach Prüfung des Fingerprints).
+
+### Sicherheit und Backups
+
+Die Weboberfläche hat keine Authentifizierung und kann Inventories/Playbooks ändern; Zugriff nur im vertrauenswürdigen Netz oder über einen Reverse-Proxy mit Authentifizierung (separat von der Schlüsselverwaltung). Schlüsseldatei separat sichern (nicht ins Repo-Backup). Tests: `pip install flask pytest && python -m pytest tests`.
+
 ## Sicherheitshinweise
 
 - Die Weboberfläche hat **keine Authentifizierung**, kann Dateien im Projekt ändern und Befehle als `root` auf Zielhosts ausführen. Nur im vertrauenswürdigen Netz betreiben, z. B. Port nur lokal binden: `"127.0.0.1:5000:5000"`.

@@ -6,3 +6,7 @@ services:
     restart: unless-stopped
     ports:
       - "5000:5000"
+    volumes:
+      # Privater SSH-Schlüssel read-only vom NAS (Hostpfad per .env/Portainer setzen).
+      # Standard /dev/null = kein Schlüssel; die App meldet dann "kein gültiger Schlüssel".
+      - ${SSH_KEY_HOST_PATH:-/dev/null}:${SSH_KEY_CONTAINER_PATH:-/run/secrets/zap_hosting_rsa}:ro

@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Verbindungstest – Testbench Ansible{% endblock %}
+
+{% block content %}
+  <h1 class="h3 mb-3">Verbindungstest</h1>
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <form method="post">
+        <div class="mb-3">
+          <label for="inventory" class="form-label">Inventory</label>
+          <select name="inventory" id="inventory" class="form-select" required>
+            {% for inv in inventories %}
+              <option value="{{ inv }}" {% if inv == selected %}selected{% endif %}>{{ inv }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="mb-3">
+          <label for="host" class="form-label">Host (optional, leer = alle)</label>
+          <input type="text" name="host" id="host" class="form-control" value="{{ host }}" maxlength="100">
+        </div>
+        <button type="submit" class="btn btn-primary" {% if not inventories %}disabled{% endif %}>Testen</button>
+        <div class="form-text mt-2">Nutzt <code>ansible -m ping</code>; es werden keine Änderungen am Zielsystem vorgenommen.</div>
+      </form>
+    </div>
+  </div>
+  {% if status %}
+    <div class="alert alert-{{ 'success' if status == 'success' else 'danger' }} mt-4">
+      {{ 'Verbindung erfolgreich.' if status == 'success' else 'Verbindungstest fehlgeschlagen.' }}
+    </div>
+    {% if command %}<p><code>{{ command }}</code></p>{% endif %}
+    <pre class="p-3 border rounded">{{ output }}</pre>
+  {% endif %}
+{% endblock %}
