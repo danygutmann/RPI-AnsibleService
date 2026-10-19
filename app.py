@@ -4,6 +4,7 @@ import re
 import shlex
 import subprocess
 
+from connection_test import run_ping
 from flask import Flask, abort, redirect, render_template, request, url_for
 
 app = Flask(__name__)
@@ -143,6 +144,29 @@ def index():
 @app.get("/inventories")
 def inventories_page():
     return render_template("inventories.html", inventories=list_inventories())
+
+
+@app.route("/connection-test", methods=["GET", "POST"])
+def connection_test_page():
+    inventories = list_inventories()
+    selected, host, status, output, command = "", "", "", "", ""
+    if request.method == "POST":
+        name = request.form.get("inventory", "")
+        host = request.form.get("host", "").strip()
+        if name not in inventories:
+            status, output = "error", "Ungültiges Inventory."
+        else:
+            selected = name
+            status, command, output = run_ping(INVENTORY_DIR / name, host or None)
+    return render_template(
+        "connection_test.html",
+        inventories=inventories,
+        selected=selected,
+        host=host,
+        status=status,
+        output=output,
+        command=command,
+    )
 
 
 @app.get("/playbooks")

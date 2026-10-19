@@ -1,2 +1,7 @@
 ansible.log
 collections/ansible_collections
+*.pem
+*_rsa
+id_*
+secrets/
+.env

@@ -8,7 +8,10 @@
       <h1>Inventories</h1>
       <p class="mb-0">Dateien aus <code>inventory/</code>:</p>
     </div>
-    <a class="btn btn-primary" href="{{ url_for('editor_page', category='inventories') }}">Neues Inventory</a>
+    <div>
+      <a class="btn btn-outline-secondary" href="{{ url_for('connection_test_page') }}">Verbindungstest</a>
+      <a class="btn btn-primary" href="{{ url_for('editor_page', category='inventories') }}">Neues Inventory</a>
+    </div>
   </div>
 
   {% if inventories %}
